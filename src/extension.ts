@@ -58,7 +58,7 @@ function lintDocument(document: vscode.TextDocument, warnOnError: Boolean = fals
     // Determine the interpreter to use
     let luacheck = luacheckerConfig.get<string>("luacheck");
 
-    let cmd = ['--no-color', '--codes', '--ranges', "--filename=" + document.fileName, '-'];
+    let cmd = ['/c', 'luacheck.bat', '--no-color', '--codes', '--ranges', document.fileName];
     let globals = luacheckerConfig.get<string>("globals");
     if (globals.length > 0) {
         cmd.push('--globals')
@@ -69,15 +69,8 @@ function lintDocument(document: vscode.TextDocument, warnOnError: Boolean = fals
         cmd.push('--ignore')
         cmd.push(ignore)
     }
-    // let cmd = ['-'];
-    // if (luacheck === "luac") {
-    //     cmd = "-p";
-    // } else {
-    //     cmd = "-bl";
-    // }
 
-    // var luaProcess: ChildProcess = spawn(luacheck, [cmd, "-"], options);
-    var luaProcess: ChildProcess = spawn(luacheck, cmd, options);
+    var luaProcess: ChildProcess = spawn('cmd.exe', cmd, options);//spawn(luacheck, cmd, options); doesn't work on windows
     luaProcess.stdout.setEncoding("utf8");
     luaProcess.stdout.on("data", (data: Buffer) => {
         if (data.length == 0) {
